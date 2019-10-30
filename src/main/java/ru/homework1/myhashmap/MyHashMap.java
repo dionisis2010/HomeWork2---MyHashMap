@@ -5,14 +5,8 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
 
     private Element[] elements;
     private Integer[] hashCodes;
-    /**
-     * количество пустых ячеек
-     */
-    private int count = 0;
-    /**
-     * полсдений используемый id в массиве
-     */
-    private int id = -1;
+    private int size = 0;
+    private int lastUseID = -1;
 
     public MyHashMap(int arrayLength) {
         this.elements = new Element[arrayLength];
@@ -38,9 +32,9 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
             return true;
         } else {
             if (intcrementID() == -1) return false;
-            elements[this.id] = new Element((K) key, (V) value);
-            hashCodes[this.id] = key.hashCode();
-            count++;
+            elements[this.lastUseID] = new Element((K) key, (V) value);
+            hashCodes[this.lastUseID] = key.hashCode();
+            size++;
             return true;
         }
     }
@@ -89,7 +83,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
         if (id > 0) {
             elements[id] = null;
             hashCodes[id] = null;
-            count--;
+            size--;
             return true;
         } else {
             return false;
@@ -107,8 +101,8 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
             elements[i] = null;
             hashCodes[i] = null;
         }
-        this.count = 0;
-        this.id = 0;
+        this.size = 0;
+        this.lastUseID = 0;
         return true;
     }
 
@@ -117,7 +111,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
      */
     @Override
     public int size() {
-        return count;
+        return size;
     }
 
     /**
@@ -141,21 +135,22 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
 
     /**
      * пределяет доступную для записи ячейку
+     *
      * @return возвращает -1 если нет свободной ячейки в массиве или индекс свободной ячейки
      */
     private int intcrementID() {
-        if (count >= elements.length) return -1;
-        for (int newID = this.id + 1; newID < elements.length; newID++) {
+        if (size >= elements.length) return -1;
+        for (int newID = this.lastUseID + 1; newID < elements.length; newID++) {
             if (elements[newID] == null) {
-                return this.id = newID;
+                return this.lastUseID = newID;
             }
         }
-        for (int id = 0; id < this.id; id++) {
+        for (int id = 0; id < this.lastUseID; id++) {
             if (elements[id] == null) {
-                return this.id = id;
+                return this.lastUseID = id;
             }
         }
-        return id = -1;
+        return this.lastUseID = -1;
     }
 
     /**

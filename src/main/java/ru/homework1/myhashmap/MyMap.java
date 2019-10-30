@@ -15,4 +15,6 @@ public interface MyMap<K, V> {
     int size();
 
     boolean haveKey(K key);
+
+    void print();
 }

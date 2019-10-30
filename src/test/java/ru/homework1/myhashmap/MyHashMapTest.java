@@ -38,7 +38,7 @@ public class MyHashMapTest {
         assertEquals(map.put("123", 123), true);
         assertEquals(map.put("new", 999), false);
         map.clear();
-        assertEquals(map.size(),0);
+        assertEquals(map.size(), 0);
         assertEquals(map.put("key", 10), true);
     }
 

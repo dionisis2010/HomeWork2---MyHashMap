@@ -9,7 +9,7 @@ public class Element<K, V> {
         return this.getKey() + " " + this.getValue();
     }
 
-    Element(K key, V value){
+    Element(K key, V value) {
         this.key = key;
         this.value = value;
     }
