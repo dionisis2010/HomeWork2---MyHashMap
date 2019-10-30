@@ -18,10 +18,6 @@ public class Element<K, V> {
         return key;
     }
 
-    void setKey(K key) {
-        this.key = key;
-    }
-
     V getValue() {
         return value;
     }

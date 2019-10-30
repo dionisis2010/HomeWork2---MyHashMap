@@ -1,9 +1,17 @@
 package ru.homework1.myhashmap;
 
-public class MyHashMap<K, V> {
-    private int count = 0;
+
+public class MyHashMap<K, V> implements MyMap<K, V> {
+
     private Element[] elements;
     private Integer[] hashCodes;
+    /**
+     * количество пустых ячеек
+     */
+    private int count = 0;
+    /**
+     * полсдений используемый id в массиве
+     */
     private int id = -1;
 
     public MyHashMap(int arrayLength) {
@@ -21,6 +29,7 @@ public class MyHashMap<K, V> {
      * @return возвращает true если успешно прошла запись в массив, если уже был эллемент с таким key, то презапишет value
      * вернет false если нет свободного места в массиве
      */
+    @Override
     public boolean put(K key, V value) {
 //        int id = searchKey(key);
         int id = searchKeyWithHash(key);
@@ -37,29 +46,31 @@ public class MyHashMap<K, V> {
     }
 
     /**
-     * @exception InvalidKeyException - бросается при обращении к key, которого нет в массиве
      * @param key
      * @return возвращает объект Element соттветсвующие key
+     * @throws InvalidKeyException - бросается при обращении к key, которого нет в массиве
      */
+    @Override
     public Element getElement(K key) {
         int id = searchKeyWithHash(key);
         if (id == -1) {
             throw new InvalidKeyException("Попытка обратиться к несуществующему ключу");
-        } else{
+        } else {
             return elements[id];
         }
     }
 
     /**
-     * @exception InvalidKeyException - бросается при обращении к key, которого нет в массиве
      * @param key
      * @return возвращает value соответствующее key
+     * @throws InvalidKeyException - бросается при обращении к key, которого нет в массиве
      */
-    public V getValue(K key){
+    @Override
+    public V getValue(K key) {
         int id = searchKeyWithHash(key);
         if (id == -1) {
             throw new InvalidKeyException("Попытка обратиться к несуществующему ключу");
-        } else{
+        } else {
             return (V) elements[id].getValue();
         }
     }
@@ -71,6 +82,7 @@ public class MyHashMap<K, V> {
      * @return вернет true если удаление прошло успешно
      * вернет false если нет елемента с таким key
      */
+    @Override
     public boolean delete(K key) {
 //        int id = searchKey(key);
         int id = searchKeyWithHash(key);
@@ -85,6 +97,40 @@ public class MyHashMap<K, V> {
     }
 
     /**
+     * присваивает всем элементам массива null
+     *
+     * @return
+     */
+    @Override
+    public boolean clear() {
+        for (int i = 0; i < elements.length; i++) {
+            elements[i] = null;
+            hashCodes[i] = null;
+        }
+        this.count = 0;
+        this.id = 0;
+        return true;
+    }
+
+    /**
+     * @return возвращает количество занятых ячеек в массиве
+     */
+    @Override
+    public int size() {
+        return count;
+    }
+
+    /**
+     * @param key
+     * @return true сли в массиве есть ключ
+     */
+    @Override
+    public boolean haveKey(K key) {
+        if (searchKeyWithHash(key) != -1) return true;
+        else return false;
+    }
+
+    /**
      * выводит в консоль каждый элемент с новой строки
      */
     public void print() {
@@ -94,41 +140,7 @@ public class MyHashMap<K, V> {
     }
 
     /**
-     * присваивает всем элементам массива null
-     * @return
-     */
-    public boolean clear(){
-        for (int i = 0; i< elements.length; i++){
-            elements[i] = null;
-            hashCodes[i] = null;
-        }
-        this.count=0;
-        this.id = 0;
-        return true;
-    }
-
-    /**
-     * @return возвращает количество занятых ячеек в массиве
-     */
-    public int size(){
-        return count;
-    }
-
-//    /**
-//     * @param key
-//     * @return проверяет наличие ключа через equals
-//     */
-//    public boolean haveKey(K key){
-//        if (searchKey(key) != -1) return true;
-//        else return false;
-//    }
-
-    public boolean haveHashKey(K key){
-        if (searchKeyWithHash(key) != -1) return true;
-        else return false;
-    }
-
-    /**
+     * пределяет доступную для записи ячейку
      * @return возвращает -1 если нет свободной ячейки в массиве или индекс свободной ячейки
      */
     private int intcrementID() {
@@ -146,7 +158,32 @@ public class MyHashMap<K, V> {
         return id = -1;
     }
 
-//    /**
+    /**
+     * принимает значение key преобразует в hashCode и производит поиск по массиву
+     *
+     * @param key
+     * @return возвращает индекс элемента соответсвтующего ключю
+     * возвращает -1 если такого ключа нет
+     */
+    private int searchKeyWithHash(K key) {
+        int id;
+        for (id = 0; id < elements.length; id++) {
+            if (hashCodes[id] == null) continue;
+            if (hashCodes[id] == key.hashCode()) return id;
+        }
+        return -1;
+    }
+
+    //    /**
+//     * @param key
+//     * @return проверяет наличие ключа через equals
+//     */
+//    public boolean haveKey(K key){
+//        if (searchKey(key) != -1) return true;
+//        else return false;
+//    }
+
+    //    /**
 //     * проверяет наличие ключа через equals
 //     * @param key
 //     * @return если в массиве есть указанный key, возвращает индекс ячейки, инче возвращает -1
@@ -159,15 +196,5 @@ public class MyHashMap<K, V> {
 //        }
 //        return -1;
 //    }
-
-    private int searchKeyWithHash(K key){
-        int id;
-        for (id = 0; id < elements.length; id++) {
-            if (hashCodes[id] == null) continue;
-            if (hashCodes[id] == key.hashCode()) return id;
-        }
-        return -1;
-    }
-
 
 }
