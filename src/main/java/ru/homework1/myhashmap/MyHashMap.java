@@ -22,7 +22,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
     private int threshold;
 
     public MyHashMap() {
-        this(20);
+        this(10);
     }
 
     public MyHashMap(int capacity) {
@@ -44,14 +44,17 @@ public class MyHashMap<K, V> implements Map<K, V> {
         calculateThreshold();
     }
 
-    private int generateID(K key) {
+    public int generateID(K key) {
         if (!validKey(key)) {
             throw new NullPointerException();
         }
-        return key.hashCode() & (capacity - 1);
+//        int h =key.hashCode();
+//        return (h^(h>>>16)) & (capacity - 1);
+        return (key.hashCode()) & capacity;
     }
-    private boolean isEmptyID(int id){
-        return entries[id] != null;
+
+    private boolean isEmptyID(int id) {
+        return entries[id] == null;
     }
 
     private void calculateThreshold() {
@@ -85,18 +88,48 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     @Override
     public V get(Object key) {
-        
-        return (V) entries[generateID((K) key)].getValue();
+        int id = generateID((K) key);
+//        if(isEmptyID(id)){
+//            return null;
+//        } else {
+//            return (V) entries[id].getValue();
+//        }
+        return isEmptyID(id) ? null : (V) entries[id].getValue();
     }
 
 
     @Override
     public V put(K key, V value) {
         int id = generateID(key);
+        int hash = key.hashCode();
+        MyEntry newEntry = new MyEntry(key, value);
+        MyEntry oldEntry = entries[id];
+        if (isEmptyID(id)) {                                               // если айди путстой
+            oldEntry = newEntry;
+        } else if (newEntry.getHashCode() == oldEntry.getHashCode()) {      //если хэши одинаковые
+            oldEntry.setValue(value);
+
+
+        } else if (oldEntry.getNextCollision() == null) {                // если нет коллизий
+            oldEntry.setNextCollision(newEntry);
+        } else {
+            oldEntry = oldEntry.getNextCollision();
+        }
+
+
         V oldValue = entries[id] == null ? null : get(key);
         entries[id] = new MyEntry<>(key, value);
         size++;
         return oldValue;
+    }
+
+    private void putCollision(MyEntry parentEntry) {
+
+    }
+
+
+    private MyEntry getEntry(int id) {
+        return entries[id];
     }
 
     @Override
