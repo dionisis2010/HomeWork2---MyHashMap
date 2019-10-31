@@ -50,6 +50,9 @@ public class MyHashMap<K, V> implements Map<K, V> {
         }
         return key.hashCode() & (capacity - 1);
     }
+    private boolean isEmptyID(int id){
+        return entries[id] != null;
+    }
 
     private void calculateThreshold() {
         this.threshold = (int) (this.loadFactor * this.capacity);
@@ -71,7 +74,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        int id = generateID((K) key);
+        return entries[id] != null;
     }
 
     @Override
@@ -81,6 +85,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     @Override
     public V get(Object key) {
+        
         return (V) entries[generateID((K) key)].getValue();
     }
 
@@ -88,13 +93,10 @@ public class MyHashMap<K, V> implements Map<K, V> {
     @Override
     public V put(K key, V value) {
         int id = generateID(key);
-        if (entries[id] != null) {
-            V oldValue = get(key);
-            entries[id] = new MyEntry<>(key, value);
-            return oldValue;
-        }
+        V oldValue = entries[id] == null ? null : get(key);
         entries[id] = new MyEntry<>(key, value);
-        return null;
+        size++;
+        return oldValue;
     }
 
     @Override
