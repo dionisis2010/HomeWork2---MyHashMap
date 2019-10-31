@@ -158,6 +158,13 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     @Override
     public V remove(Object key) {
+        int id = generateID((K) key);
+        if (!isEmptyID(id)) {
+            V oldValue = get(key);
+            entries[id] = null;
+            size--;
+            return oldValue;
+        }
         return null;
     }
 
