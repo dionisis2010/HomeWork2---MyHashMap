@@ -2,7 +2,7 @@ package ru.homework1.myhashmap;
 
 import java.util.Objects;
 
-public class MyEntry<K,V> {
+public class MyEntry<K, V> {
 
     private MyEntry nextCollision;
     private K key;
@@ -15,6 +15,9 @@ public class MyEntry<K,V> {
         this.hashCode = key.hashCode();
     }
 
+    public boolean hasNext() {
+        return nextCollision != null;
+    }
 
     @Override
     public String toString() {
@@ -45,10 +48,6 @@ public class MyEntry<K,V> {
 
     public K getKey() {
         return key;
-    }
-
-    public void setKey(K key) {
-        this.key = key;
     }
 
     public V getValue() {

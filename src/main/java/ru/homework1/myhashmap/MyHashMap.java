@@ -15,18 +15,22 @@ import java.util.Set;
  */
 public class MyHashMap<K, V> implements Map<K, V> {
 
+    private static int DEFAULT_CAPACITY = 3;
+    private static double DEFAULT_LOADFACTOR = 0.75;
+
     private MyEntry[] entries;
     private int size = 0;
     private int capacity;
     private double loadFactor;
     private int threshold;
 
+
     public MyHashMap() {
-        this(10);
+        this(DEFAULT_CAPACITY);
     }
 
     public MyHashMap(int capacity) {
-        this(capacity, 0.75);
+        this(capacity, DEFAULT_LOADFACTOR);
     }
 
     /**
@@ -44,13 +48,14 @@ public class MyHashMap<K, V> implements Map<K, V> {
         calculateThreshold();
     }
 
-    public int generateID(K key) {
+    private int generateID(K key) {
         if (!validKey(key)) {
             throw new NullPointerException();
         }
 //        int h =key.hashCode();
 //        return (h^(h>>>16)) & (capacity - 1);
-        return (key.hashCode()) & capacity;
+//        return (key.hashCode()) & capacity;
+        return key.hashCode() % capacity;
     }
 
     private boolean isEmptyID(int id) {
@@ -101,30 +106,49 @@ public class MyHashMap<K, V> implements Map<K, V> {
     @Override
     public V put(K key, V value) {
         int id = generateID(key);
-        int hash = key.hashCode();
-        MyEntry newEntry = new MyEntry(key, value);
-        MyEntry oldEntry = entries[id];
-        if (isEmptyID(id)) {                                               // если айди путстой
-            oldEntry = newEntry;
-        } else if (newEntry.getHashCode() == oldEntry.getHashCode()) {      //если хэши одинаковые
-            oldEntry.setValue(value);
 
-
-        } else if (oldEntry.getNextCollision() == null) {                // если нет коллизий
-            oldEntry.setNextCollision(newEntry);
-        } else {
-            oldEntry = oldEntry.getNextCollision();
+        if (isEmptyID(id)) {
+            return easyPut(key, value, id);
         }
-
-
-        V oldValue = entries[id] == null ? null : get(key);
-        entries[id] = new MyEntry<>(key, value);
+        MyEntry entry = entries[id];
+        while (true){
+            if (entry.getKey().equals(key)) {
+                return update(entry, value);
+            }
+            if (entry.hasNext()){
+                entry = entry.getNextCollision();
+            } else break;
+        }
+        entry.setNextCollision(new MyEntry(key, value));
         size++;
-        return oldValue;
+        return null;
     }
 
-    private void putCollision(MyEntry parentEntry) {
+    private MyEntry search(K key){
+        MyEntry entry = entries[generateID(key)];
 
+        while (true){
+            if (entry.getKey().equals(key)) {
+                return entry;
+            }
+            if (entry.hasNext()){
+                entry = entry.getNextCollision();
+            } else break;
+        }
+        return entry;
+    }
+
+    private V easyPut(K key, V value, int id) {
+        entries[id] = new MyEntry<>(key, value);
+        size++;
+        return null;
+    }
+
+    private V update(MyEntry entry, V value) {
+        V oldValue = (V) entry.getValue();
+        entry.setValue(value);
+        size++;
+        return oldValue;
     }
 
 
@@ -175,7 +199,14 @@ public class MyHashMap<K, V> implements Map<K, V> {
     public void print() {
         for (int i = 0; i < entries.length; i++) {
             if (entries[i] != null) {
-                System.out.println(i + ". " + entries[i]);
+                MyEntry entry = entries[i];
+
+                while (true){
+                    System.out.println(i + " " + entry);
+                    if (entry.hasNext()){
+                        entry = entry.getNextCollision();
+                    } else break;
+                }
             }
         }
     }
