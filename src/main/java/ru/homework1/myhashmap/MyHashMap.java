@@ -2,26 +2,68 @@ package ru.homework1.myhashmap;
 
 import javafx.util.Pair;
 
+import java.security.InvalidParameterException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * собственная реализация HashMap на основе хэштаблиц
+ *
  * @param <K>
  * @param <V>
  */
-public class MyHashMap<K,V> implements Map<K,V> {
+public class MyHashMap<K, V> implements Map<K, V> {
 
+    private Entry<K, V>[] entries;
+    private int size = 0;
+    private int capacity;
+    private double loadFactor;
+    private int threshold;
+
+    public MyHashMap() {
+        this(20);
+    }
+
+    public MyHashMap(int capacity) {
+        this(capacity, 0.75);
+    }
+
+    /**
+     * @exception InvalidParameterException
+     * @param capacity исходный размер внутреннего массива
+     * @param loadFactor число от 0 до 1 определяющий при каком проценте заполненности внутреннего массива произойдет его расшиерение
+     */
+    public MyHashMap(int capacity, double loadFactor) {
+        if (loadFactor < 0 || loadFactor > 1 || capacity < 0) {
+            throw new InvalidParameterException();
+        } else {
+            this.loadFactor = loadFactor;
+            this.capacity = capacity;
+        }
+        calculateThreshold();
+    }
+
+    private int generateID(K key) {
+        return key.hashCode() & capacity;
+    }
+
+    private void calculateThreshold() {
+        this.threshold = (int) (this.loadFactor * this.capacity);
+    }
+
+    private boolean validKey(K key) {
+        return key != null;
+    }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
 
     @Override
@@ -41,6 +83,7 @@ public class MyHashMap<K,V> implements Map<K,V> {
 
     @Override
     public V put(K key, V value) {
+        int id = generateID(key);
         return null;
     }
 
@@ -59,9 +102,14 @@ public class MyHashMap<K,V> implements Map<K,V> {
 //        }
     }
 
+    /**
+     * присваивает всем ячейкам массива null
+     */
     @Override
     public void clear() {
-
+        for (int i = 0; i < entries.length; i++) {
+            entries[i] = null;
+        }
     }
 
     @Override
