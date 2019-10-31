@@ -14,8 +14,6 @@ public class MyHashMapAlpha<K, V> implements MyMap<K, V> {
     private int size = 0;
     private int lastUseID = -1;
 
-
-
     public MyHashMapAlpha(int arrayLength) {
         this.elements = new Element[arrayLength];
         this.hashCodes = new Integer[arrayLength];
@@ -26,8 +24,6 @@ public class MyHashMapAlpha<K, V> implements MyMap<K, V> {
     }
 
     /**
-     * @param key
-     * @param value
      * @return возвращает true если успешно прошла запись в массив, если уже был эллемент с таким key, то презапишет value
      * вернет false если нет свободного места в массиве
      */
@@ -48,7 +44,6 @@ public class MyHashMapAlpha<K, V> implements MyMap<K, V> {
     }
 
     /**
-     * @param key
      * @return возвращает объект Element соттветсвующие key
      * @throws InvalidKeyException - бросается при обращении к key, которого нет в массиве
      */
@@ -63,7 +58,6 @@ public class MyHashMapAlpha<K, V> implements MyMap<K, V> {
     }
 
     /**
-     * @param key
      * @return возвращает value соответствующее key
      * @throws InvalidKeyException - бросается при обращении к key, которого нет в массиве
      */
@@ -79,8 +73,6 @@ public class MyHashMapAlpha<K, V> implements MyMap<K, V> {
 
     /**
      * удаление происходит путем присвоения ячейке с указанным key значения null
-     *
-     * @param key
      * @return вернет true если удаление прошло успешно
      * вернет false если нет елемента с таким key
      */
@@ -100,8 +92,6 @@ public class MyHashMapAlpha<K, V> implements MyMap<K, V> {
 
     /**
      * присваивает всем элементам массива null
-     *
-     * @return
      */
     @Override
     public boolean clear() {
@@ -123,13 +113,11 @@ public class MyHashMapAlpha<K, V> implements MyMap<K, V> {
     }
 
     /**
-     * @param key
      * @return true сли в массиве есть ключ
      */
     @Override
     public boolean haveKey(K key) {
-        if (searchKeyWithHash(key) != -1) return true;
-        else return false;
+        return searchKeyWithHash(key) != -1;
     }
 
     /**
@@ -163,12 +151,11 @@ public class MyHashMapAlpha<K, V> implements MyMap<K, V> {
 
     /**
      * принимает значение key преобразует в hashCode и производит поиск по массиву
-     *
-     * @param key
      * @return возвращает индекс элемента соответсвтующего ключю
      * возвращает -1 если такого ключа нет
      */
     private int searchKeyWithHash(K key) {
+        validKey(key);
         int id;
         for (id = 0; id < elements.length; id++) {
             if (hashCodes[id] == null) continue;
@@ -177,34 +164,9 @@ public class MyHashMapAlpha<K, V> implements MyMap<K, V> {
         return -1;
     }
 
-    private  boolean validKey(K key){
+    private void validKey(K key){
         if (key == null){
             throw new NullPointerException();
         }
-        return false;
     }
-
-    //    /**
-//     * @param key
-//     * @return проверяет наличие ключа через equals
-//     */
-//    public boolean haveKey(K key){
-//        if (searchKey(key) != -1) return true;
-//        else return false;
-//    }
-
-    //    /**
-//     * проверяет наличие ключа через equals
-//     * @param key
-//     * @return если в массиве есть указанный key, возвращает индекс ячейки, инче возвращает -1
-//     */
-//    private int searchKey(K key) {
-//        int id;
-//        for (id = 0; id < elements.length; id++) {
-//            if (elements[id] == null) continue;
-//            if (elements[id].getKey().equals(key)) return id;
-//        }
-//        return -1;
-//    }
-
 }
