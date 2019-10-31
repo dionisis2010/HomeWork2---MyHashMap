@@ -126,6 +126,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     private MyEntry search(K key){
         MyEntry entry = entries[generateID(key)];
+        if (entry == null) return null;
 
         while (true){
             if (entry.getKey().equals(key)) {
@@ -133,9 +134,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
             }
             if (entry.hasNext()){
                 entry = entry.getNextCollision();
-            } else break;
+            } else return null;
         }
-        return entry;
     }
 
     private V easyPut(K key, V value, int id) {
@@ -160,6 +160,33 @@ public class MyHashMap<K, V> implements Map<K, V> {
     public V remove(Object key) {
         int id = generateID((K) key);
         if (!isEmptyID(id)) {
+            MyEntry tmpNextEntry = search((K)key).getNextCollision();
+            MyEntry tmpPrevEntry;
+            MyEntry entry = entries[id];
+            if (entry.getKey().equals(key)){
+                if (entry.getNextCollision() == null) {
+                    entries[id] = null;
+                } else {
+                    entries[id] = tmpNextEntry;
+                }
+            } else {
+                if (entry.hasNext()) {
+                    tmpPrevEntry = entry;
+                    entry = entry.getNextCollision();
+                } else return null;
+                while (true) {
+                    if (entry.getKey().equals(key)) {
+                        if (entry.getNextCollision() != null){
+                            tmpPrevEntry.setNextCollision(entry);
+                        } else {
+                            tmpPrevEntry.setNextCollision(null);
+                        }
+                    }
+                    if (entry.hasNext()) {
+                        entry = entry.getNextCollision();
+                    } else return null;
+                }
+            }
             V oldValue = get(key);
             entries[id] = null;
             size--;
