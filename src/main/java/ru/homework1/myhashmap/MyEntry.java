@@ -9,6 +9,17 @@ public class MyEntry<K,V> {
     private V value;
     private int hashCode;
 
+    public MyEntry(K key, V value) {
+        this.key = key;
+        this.value = value;
+        this.hashCode = key.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return this.hashCode + " " + this.key + " " + this.value;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class MyHashMap<K, V> implements Map<K, V> {
 
-    private Entry<K, V>[] entries;
+    private MyEntry[] entries;
     private int size = 0;
     private int capacity;
     private double loadFactor;
@@ -30,22 +30,25 @@ public class MyHashMap<K, V> implements Map<K, V> {
     }
 
     /**
-     * @exception InvalidParameterException
-     * @param capacity исходный размер внутреннего массива
+     * @param capacity   исходный размер внутреннего массива
      * @param loadFactor число от 0 до 1 определяющий при каком проценте заполненности внутреннего массива произойдет его расшиерение
+     * @throws InvalidParameterException
      */
     public MyHashMap(int capacity, double loadFactor) {
         if (loadFactor < 0 || loadFactor > 1 || capacity < 0) {
             throw new InvalidParameterException();
-        } else {
-            this.loadFactor = loadFactor;
-            this.capacity = capacity;
         }
+        this.loadFactor = loadFactor;
+        this.capacity = capacity;
+        entries = new MyEntry[capacity];
         calculateThreshold();
     }
 
     private int generateID(K key) {
-        return key.hashCode() & capacity;
+        if (!validKey(key)) {
+            throw new NullPointerException();
+        }
+        return key.hashCode() & (capacity - 1);
     }
 
     private void calculateThreshold() {
@@ -78,12 +81,19 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     @Override
     public V get(Object key) {
-        return null;
+        return (V) entries[generateID((K) key)].getValue();
     }
+
 
     @Override
     public V put(K key, V value) {
         int id = generateID(key);
+        if (entries[id] != null) {
+            V oldValue = get(key);
+            entries[id] = new MyEntry<>(key, value);
+            return oldValue;
+        }
+        entries[id] = new MyEntry<>(key, value);
         return null;
     }
 
@@ -125,5 +135,13 @@ public class MyHashMap<K, V> implements Map<K, V> {
     @Override
     public Set<Entry<K, V>> entrySet() {
         return null;
+    }
+
+    public void print() {
+        for (int i = 0; i < entries.length; i++) {
+            if (entries[i] != null) {
+                System.out.println(i + ". " + entries[i]);
+            }
+        }
     }
 }
