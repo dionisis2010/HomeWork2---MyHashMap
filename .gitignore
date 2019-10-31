@@ -6,3 +6,4 @@
 /.idea/$PRODUCT_WORKSPACE_FILE$
 /.gitignore
 /plan.txt
+/target/
