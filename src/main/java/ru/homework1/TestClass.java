@@ -4,40 +4,37 @@ import com.sun.xml.internal.ws.api.model.wsdl.WSDLOutput;
 import ru.homework1.myhashmap.MyHashMap;
 import sun.nio.cs.Surrogate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class TestClass {
-    public static void main(String[] args) {
+    static Map<String, String> map = new HashMap<>();
+    static Map<String, String> mymap = new MyHashMap<>();
+    static int DEFAULT_INIT = 100;
 
-        MyHashMap<String, String> map = new MyHashMap<>();
-        map.put("key1", "value1");
-        map.put("key2", "value2");
-        map.put("key3", "value3");
-        map.put("key4", "value4");
-        map.put("key5", "value4");
-        map.put("key6", "value4");
-        map.put("key7", "value4");
-        map.put("key8", "value4");
+    static String key = "key";
+    static String value = "value";
 
-        System.out.println(map.size());
-
-//        map.resize(30);
-        map.print();
-        System.out.println(map.size());
-        System.out.println();
-
-        printArray(map.getAllEntries());
-        map.print();
+    static void init() {
+        init(DEFAULT_INIT);
     }
 
-    static <T> void printArray(T[] array) {
-        for (int i = 0; i < array.length; i++) {
-            System.out.println(array[i]);
+    static void init(int size) {
+        for (int i = 0; i < size; i++) {
+            map.put(key + i, value + i);
+            mymap.put(key + i, value + i);
         }
     }
+
+
+
+    public static void main(String[] args) {
+
+        init();
+        MyHashMap myHashMap = (MyHashMap) mymap;
+        myHashMap.print();
+    }
+
+
 
 
 }
