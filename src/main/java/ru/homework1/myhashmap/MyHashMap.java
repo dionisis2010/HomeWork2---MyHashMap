@@ -204,26 +204,29 @@ public class MyHashMap<K, V> implements Map<K, V> {
     @Override
     public V remove(Object key) {
         int id = generateID((K) key);
-        if (entries[id] == null) return null;
-        if (entries[id].getKey().equals(key)) {
-            V oldValue = (V) entries[id].getValue();
-            entries[id] = entries[id].hasNext() ? entries[id].getNextCollision() : null;
+        if (isEmptyID(id)) return null;
+        MyEntry tmpPrevEntry;
+        MyEntry entry = entries[id];
+        if (entry.getKey().equals(key)){//если верхний в серьге
+            entries[id] = entry.hasNext() ? entry.getNextCollision() : null;
             size--;
-            return oldValue;
-        }
-        if (!entries[id].hasNext()) return null;
-        MyEntry lastEntry = entries[id];
-        MyEntry checkedEntry = entries[id].getNextCollision();
-        while (true) {
-            if (checkedEntry.getKey().equals(key)) {
-                V oldValue = (V) checkedEntry.getValue();
-                lastEntry.setNextCollision(checkedEntry.getNextCollision());
-                size--;
-                return oldValue;
-            } else if (checkedEntry.hasNext()) {
-                lastEntry = checkedEntry;
-                checkedEntry = checkedEntry.getNextCollision();
-            } else return null;
+            return (V) entry.getValue();
+        } else {//не первый в серьге
+            while (true) {
+                if (entry.hasNext()) {//есть дальнейший
+                    tmpPrevEntry = entry;
+                    entry = entry.getNextCollision();
+                } else return null;
+                if (entry.getKey().equals(key)) {
+                    if (!entry.hasNext()){//следующий - пусто
+                        tmpPrevEntry.setNextCollision(null);
+                    } else {//следующий не пусто
+                        tmpPrevEntry.setNextCollision(entry.getNextCollision());
+                    }
+                    size--;
+                    return (V) entry.getValue();
+                }
+            }
         }
     }
 
