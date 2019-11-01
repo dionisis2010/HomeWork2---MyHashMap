@@ -1,8 +1,9 @@
 package ru.homework1.myhashmap;
 
+import java.util.Map;
 import java.util.Objects;
 
-public class MyEntry<K, V> {
+public class MyEntry<K, V> implements Map.Entry<K, V> {
 
     private MyEntry nextCollision;
     private K key;
@@ -54,8 +55,10 @@ public class MyEntry<K, V> {
         return value;
     }
 
-    public void setValue(V value) {
+    public V setValue(V value) {
+        V oldValue = this.value;
         this.value = value;
+        return oldValue;
     }
 
     public int getHashCode() {

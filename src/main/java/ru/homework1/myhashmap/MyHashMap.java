@@ -1,10 +1,7 @@
 package ru.homework1.myhashmap;
 
 import java.security.InvalidParameterException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * собственная реализация HashMap на основе хэштаблиц
@@ -65,7 +62,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
         }
     }
 
-    private void checkCapasity() {
+    private void checkCapacity() {
         if (size >= threshold) resize();
     }
 
@@ -100,7 +97,6 @@ public class MyHashMap<K, V> implements Map<K, V> {
         }
         return allEntries;
     }
-
 
     @Override
     public int size() {
@@ -260,7 +256,13 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return null;
+        Set<Entry<K, V>> set = new HashSet<>();
+//        getAllEntries
+        MyEntry[] myEntriesArray = getAllEntries();
+        for (int i = 0; i < myEntriesArray.length; i++) {
+            set.add(myEntriesArray[i]);
+        }
+        return set;
     }
 
     public void print() {
