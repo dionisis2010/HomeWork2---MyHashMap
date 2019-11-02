@@ -1,4 +1,4 @@
-package ru.homework1.myhashmapalpha;
+package ru.homework2.myhashmapalpha;
 
 class InvalidKeyException extends RuntimeException{
     InvalidKeyException(String message) {

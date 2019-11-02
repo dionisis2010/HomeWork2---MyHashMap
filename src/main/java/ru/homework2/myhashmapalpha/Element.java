@@ -1,4 +1,4 @@
-package ru.homework1.myhashmapalpha;
+package ru.homework2.myhashmapalpha;
 
 import java.util.Objects;
 

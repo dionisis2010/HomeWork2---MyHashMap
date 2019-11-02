@@ -1,7 +1,8 @@
-package ru.homework1.myhashmap;
+package ru.homework3.myhashmap;
 
 import java.security.InvalidParameterException;
 import java.util.*;
+
 
 /**
  * собственная реализация HashMap на основе хэштаблиц
@@ -19,6 +20,11 @@ public class MyHashMap<K, V> implements Map<K, V> {
     private int capacity;
     private double loadFactor;
     private int threshold;
+
+    /**
+     * служебное поле для сравнения по хэшкоду, чтобы не при нескольких итерация подряд с одним ключем
+     */
+    private int lastUsedKeyHashCode;
 
 
     public MyHashMap() {
@@ -44,12 +50,23 @@ public class MyHashMap<K, V> implements Map<K, V> {
         calculateThreshold();
     }
 
+
+    /**
+     * @throws NullPointerException бросается если на входе "наловый" key
+     */
+    private void validKey(K key) {
+        if (key == null) {
+            throw new NullPointerException();
+        }
+    }
+
     /**
      * вычисляет индекс в массиве на основе hashcode
      */
     private int generateID(K key) {
         validKey(key);
-        return Math.abs(key.hashCode()) % capacity;
+        this.lastUsedKeyHashCode = key.hashCode();
+        return Math.abs(lastUsedKeyHashCode) % capacity;
     }
 
     /**
@@ -60,11 +77,13 @@ public class MyHashMap<K, V> implements Map<K, V> {
     }
 
     /**
-     * @throws NullPointerException бросается если на входе "наловый" key
+     * служебный метод сравнения ключей по хэшкоду, для повышения производительности
      */
-    private void validKey(K key) {
-        if (key == null) {
-            throw new NullPointerException();
+    private boolean compareKeys(MyEntry<K,V> entry, K key){
+        if (entry.getHashCode() != lastUsedKeyHashCode){
+            return false;
+        } else {
+            return entry.getKey().equals(key);
         }
     }
 
@@ -102,7 +121,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
         }
         MyEntry entry = entries[id];
         while (true) {
-            if (entry.getKey().equals(newEntry.getKey())) {
+            if (entry.equalsKey(newEntry)) {
                 entry.setValue(newEntry.getValue());
                 size++;
                 return;
@@ -187,7 +206,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
         if (entry == null) return null;
 
         while (true) {
-            if (entry.getKey().equals(key)) {
+            if (compareKeys(entry, key)) {
                 return entry;
             }
             if (entry.hasNext()) {
@@ -221,7 +240,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
         }
         MyEntry entry = entries[id];
         while (true) {
-            if (entry.getKey().equals(key)) {
+            if (compareKeys(entry, key)) {
                 return (V) update(entry, value);
             }
             if (entry.hasNext()) {
@@ -263,7 +282,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
         if (isEmptyID(id)) return null;
         MyEntry tmpPrevEntry;
         MyEntry entry = entries[id];
-        if (entry.getKey().equals(key)) {//если верхний в серьге
+        if (compareKeys(entry, (K) key)) {//если верхний в серьге
             entries[id] = entry.hasNext() ? entry.getNextCollision() : null;
             size--;
             return (V) entry.getValue();
@@ -273,7 +292,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
                     tmpPrevEntry = entry;
                     entry = entry.getNextCollision();
                 } else return null;
-                if (entry.getKey().equals(key)) {
+                if (compareKeys(entry, (K) key)) {
                     if (!entry.hasNext()) {//следующий - пусто
                         tmpPrevEntry.setNextCollision(null);
                     } else {//следующий не пусто
@@ -299,8 +318,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
     public Set<K> keySet() {
         Set<K> set = new HashSet<>();
         MyEntry<K, V>[] arrayEntries = getAllEntries();
-        for (int i = 0; i < arrayEntries.length; i++) {
-            set.add(arrayEntries[i].getKey());
+        for (MyEntry<K, V> arrayEntry : arrayEntries) {
+            set.add(arrayEntry.getKey());
         }
         return set;
     }
@@ -309,8 +328,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
     public Collection<V> values() {
         MyEntry<K, V>[] arrayEntries = getAllEntries();
         List<V> listValues = new ArrayList<>(arrayEntries.length);
-        for (int i = 0; i < arrayEntries.length; i++) {
-            listValues.add(arrayEntries[i].getValue());
+        for (MyEntry<K, V> arrayEntry : arrayEntries) {
+            listValues.add(arrayEntry.getValue());
         }
 
         return listValues;
@@ -320,9 +339,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
     public Set<Entry<K, V>> entrySet() {
         Set<Entry<K, V>> set = new HashSet<>();
         MyEntry<K, V>[] arrayEntries = getAllEntries();
-        for (int i = 0; i < arrayEntries.length; i++) {
-            set.add(arrayEntries[i]);
-        }
+        Collections.addAll(set, arrayEntries);
         return set;
     }
 

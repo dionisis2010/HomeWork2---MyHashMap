@@ -1,4 +1,4 @@
-package ru.homework1.myhashmap;
+package ru.homework3.myhashmap;
 
 import org.junit.Test;
 
@@ -10,7 +10,7 @@ public class MyHashMapTest {
 
     static Map<String, String> map = new HashMap<>();
     static Map<String, String> mymap = new MyHashMap<>();
-    static int DEFAULT_INIT = 100;
+    static int DEFAULT_INIT = 1000;
 
     static String key = "key";
     static String value = "value";

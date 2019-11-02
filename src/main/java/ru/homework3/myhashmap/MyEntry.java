@@ -1,9 +1,9 @@
-package ru.homework1.myhashmap;
+package ru.homework3.myhashmap;
 
 import java.util.Map;
 import java.util.Objects;
 
-public class MyEntry<K, V> implements Map.Entry<K,V> {
+public class MyEntry<K, V> implements Map.Entry<K, V> {
 
     private MyEntry nextCollision;
     private K key;
@@ -18,6 +18,14 @@ public class MyEntry<K, V> implements Map.Entry<K,V> {
 
     public boolean hasNext() {
         return nextCollision != null;
+    }
+
+    public boolean equalsKey(MyEntry<K, V> entry) {
+        if (this.getHashCode() != entry.getHashCode()) {
+            return false;
+        } else {
+            return this.getKey().equals(entry.getKey());
+        }
     }
 
     @Override

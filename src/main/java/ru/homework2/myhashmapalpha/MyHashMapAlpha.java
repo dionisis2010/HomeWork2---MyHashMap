@@ -1,4 +1,4 @@
-package ru.homework1.myhashmapalpha;
+package ru.homework2.myhashmapalpha;
 
 /**
  * альфа версия собственной реализации Map, новый элемент записывает в следующую "свободную ячейку" массива,
