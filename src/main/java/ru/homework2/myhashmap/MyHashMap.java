@@ -1,11 +1,12 @@
-package ru.homework3.myhashmap;
+package ru.homework2.myhashmap;
 
 import java.security.InvalidParameterException;
 import java.util.*;
 
 
 /**
- * собственная реализация HashMap на основе хэштаблиц
+ * собственная реализация HashMap на основе хэштаблиц.
+ * Обработка коллизий происходит методом цепочек (в конфликтующих корзинах формируется односвязный список)
  *
  * @param <K>
  * @param <V>
@@ -79,8 +80,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
     /**
      * служебный метод сравнения ключей по хэшкоду, для повышения производительности
      */
-    private boolean compareKeys(MyEntry<K,V> entry, K key){
-        if (entry.getHashCode() != lastUsedKeyHashCode){
+    private boolean compareKeys(MyEntry<K, V> entry, K key) {
+        if (entry.getHashCode() != lastUsedKeyHashCode) {
             return false;
         } else {
             return entry.getKey().equals(key);
@@ -98,14 +99,36 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     private void resize(int newCapacity) {
         MyEntry<K, V>[] oldEntries = this.getAllEntries();
+//        nulledCollision(oldEntries);
         this.capacity = newCapacity;
         entries = new MyEntry[newCapacity];
         this.size = 0;
         calculateThreshold();
-        for (int i = 0; i < oldEntries.length; i++) {
-            oldEntries[i].setNextCollision(null);
-            put(oldEntries[i]);
+
+        for (MyEntry<K, V> oldEntry : oldEntries) {
+            oldEntry.setNextCollision(null);
+            put(oldEntry);
         }
+    }
+
+    /**
+     * @return массив всех Entry (поле Entry.nextCollision обнуляется)
+     */
+    private MyEntry<K, V>[] getAllEntries() {
+        MyEntry<K, V>[] allEntries = new MyEntry[size()];
+        int id = 0;
+        for (int entriesID = 0; entriesID < entries.length; entriesID++) {
+            if (isEmptyID(entriesID)) {
+                continue;
+            }
+            allEntries[id] = entries[entriesID];
+            id++;
+            while (allEntries[id - 1].hasNext()) {
+                allEntries[id] = allEntries[id - 1].getNextCollision();
+                id++;
+            }
+        }
+        return allEntries;
     }
 
     /**
@@ -132,26 +155,6 @@ public class MyHashMap<K, V> implements Map<K, V> {
         }
         entry.setNextCollision(newEntry);
         incrementSize();
-    }
-
-    /**
-     * @return массив всех Entry (поле Entry.nextCollision обнуляется)
-     */
-    private MyEntry<K, V>[] getAllEntries() {
-        MyEntry<K, V>[] allEntries = new MyEntry[size];
-        int id = 0;
-        for (int i = 0; i < entries.length; i++) {
-            if (isEmptyID(i)) {
-                continue;
-            }
-            allEntries[id] = entries[i];
-            id++;
-            while (allEntries[id - 1].hasNext()) {
-                allEntries[id] = allEntries[id - 1].getNextCollision();
-                id++;
-            }
-        }
-        return allEntries;
     }
 
 
@@ -274,6 +277,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     /**
      * удаляет Entry из мапы
+     *
      * @return возвращает старое значение, либо null, если такого ключа нет
      */
     @Override
@@ -331,15 +335,13 @@ public class MyHashMap<K, V> implements Map<K, V> {
         for (MyEntry<K, V> arrayEntry : arrayEntries) {
             listValues.add(arrayEntry.getValue());
         }
-
         return listValues;
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
         Set<Entry<K, V>> set = new HashSet<>();
-        MyEntry<K, V>[] arrayEntries = getAllEntries();
-        Collections.addAll(set, arrayEntries);
+        Collections.addAll(set, getAllEntries());
         return set;
     }
 

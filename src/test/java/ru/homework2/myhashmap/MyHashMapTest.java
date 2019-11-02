@@ -1,4 +1,4 @@
-package ru.homework3.myhashmap;
+package ru.homework2.myhashmap;
 
 import org.junit.Test;
 
@@ -9,8 +9,8 @@ import static org.junit.Assert.*;
 public class MyHashMapTest {
 
     static Map<String, String> map = new HashMap<>();
-    static Map<String, String> mymap = new MyHashMap<>();
-    static int DEFAULT_INIT = 1000;
+    static Map<String, String> mymap;
+    static int DEFAULT_INIT = 500;
 
     static String key = "key";
     static String value = "value";
@@ -20,6 +20,8 @@ public class MyHashMapTest {
     }
 
     private static void init(int size) {
+        map = new HashMap<>();
+        mymap = new MyHashMap<>();
         for (int i = 0; i < size; i++) {
             map.put(key + i, value + i);
             mymap.put(key + i, value + i);
@@ -75,7 +77,7 @@ public class MyHashMapTest {
     @Test
     public void containsValue() {
         init();
-        for (int i = 0; i < DEFAULT_INIT; i++) {
+        for (int i = 0; i < mymap.size(); i++) {
             assertEquals(mymap.containsValue(value + i), map.containsValue(value + i));
         }
     }

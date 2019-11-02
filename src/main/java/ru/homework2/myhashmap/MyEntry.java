@@ -1,4 +1,4 @@
-package ru.homework3.myhashmap;
+package ru.homework2.myhashmap;
 
 import java.util.Map;
 import java.util.Objects;
@@ -10,17 +10,17 @@ public class MyEntry<K, V> implements Map.Entry<K, V> {
     private V value;
     private int hashCode;
 
-    public MyEntry(K key, V value) {
+    MyEntry(K key, V value) {
         this.key = key;
         this.value = value;
         this.hashCode = key.hashCode();
     }
 
-    public boolean hasNext() {
+    boolean hasNext() {
         return nextCollision != null;
     }
 
-    public boolean equalsKey(MyEntry<K, V> entry) {
+    boolean equalsKey(MyEntry<K, V> entry) {
         if (this.getHashCode() != entry.getHashCode()) {
             return false;
         } else {
@@ -47,33 +47,33 @@ public class MyEntry<K, V> implements Map.Entry<K, V> {
         return Objects.hash(key, value);
     }
 
-    public MyEntry getNextCollision() {
+    int getHashCode() {
+        return hashCode;
+    }
+
+    MyEntry getNextCollision() {
         return nextCollision;
     }
 
-    public void setNextCollision(MyEntry nextCollision) {
+    void setNextCollision(MyEntry nextCollision) {
         this.nextCollision = nextCollision;
     }
 
+    @Override
     public K getKey() {
         return key;
     }
 
+    @Override
     public V getValue() {
         return value;
     }
 
+    @Override
     public V setValue(V value) {
         V oldValue = this.value;
         this.value = value;
         return oldValue;
     }
 
-    public int getHashCode() {
-        return hashCode;
-    }
-
-    public void setHashCode(int hashCode) {
-        this.hashCode = hashCode;
-    }
 }
