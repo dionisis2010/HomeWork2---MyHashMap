@@ -1,5 +1,6 @@
 package ru.homework2.myhashmap;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
@@ -8,29 +9,31 @@ import static org.junit.Assert.*;
 
 public class MyHashMapTest {
 
-    static Map<String, String> map = new HashMap<>();
-    static Map<String, String> mymap;
-    static int DEFAULT_INIT = 500;
+    private Map<String, String> map;
+    private Map<String, String> mymap;
 
-    static String key = "key";
-    static String value = "value";
+    private static final int DEFAULT_INIT = 500;
+    private static final String key = "key";
+    private static final String value = "value";
 
-    private static void init() {
+    @Before
+    public void init() {
         init(DEFAULT_INIT);
     }
 
-    private static void init(int size) {
+    public void init(int size) {
         map = new HashMap<>();
         mymap = new MyHashMap<>();
         for (int i = 0; i < size; i++) {
             map.put(key + i, value + i);
             mymap.put(key + i, value + i);
         }
+        map.put(null,"null");
+        mymap.put(null,"null");
     }
 
     @Test
     public void put() {
-        init();
         for (int i = 0; i < DEFAULT_INIT; i++) {
             assertEquals(mymap.get(key + i), map.get(key + i));
         }
@@ -38,7 +41,6 @@ public class MyHashMapTest {
 
     @Test
     public void size() {
-        init();
         assertEquals(mymap.size(), map.size());
         map.put(key, value);
         mymap.put(key, value);
@@ -68,7 +70,6 @@ public class MyHashMapTest {
 
     @Test
     public void containsKey() {
-        init();
         for (int i = 0; i < DEFAULT_INIT; i++) {
             assertEquals(mymap.containsKey(key + i), map.containsKey(key + i));
         }
@@ -76,7 +77,6 @@ public class MyHashMapTest {
 
     @Test
     public void containsValue() {
-        init();
         for (int i = 0; i < mymap.size(); i++) {
             assertEquals(mymap.containsValue(value + i), map.containsValue(value + i));
         }
@@ -84,7 +84,6 @@ public class MyHashMapTest {
 
     @Test
     public void get() {
-        init();
         assertEquals(mymap.get("key1"), map.get("key1"));
         assertEquals(mymap.get("key"), map.get("key"));
         assertEquals(mymap.get("key50"), map.get("key50"));
@@ -92,7 +91,6 @@ public class MyHashMapTest {
 
     @Test
     public void remove() {
-        init();
         for (int i = 0; i < map.size(); i++) {
             assertEquals(mymap.remove(key + i), map.remove(key + i));
             assertEquals(mymap.size(), map.size());
@@ -102,7 +100,6 @@ public class MyHashMapTest {
 
     @Test
     public void putAll() {
-        init();
         Map<String, String> newMap = new HashMap<String, String>();
         String newKey = "newKey";
         String newValue = "newValue";
@@ -119,7 +116,6 @@ public class MyHashMapTest {
 
     @Test
     public void clear() {
-        init();
         map.clear();
         mymap.clear();
         assertEquals(mymap.get("key1"), map.get("key1"));
@@ -129,7 +125,6 @@ public class MyHashMapTest {
 
     @Test
     public void keySet() {
-        init();
         Set set1 = map.keySet();
         Set set2 = mymap.keySet();
 
@@ -141,7 +136,6 @@ public class MyHashMapTest {
 
     @Test
     public void values() {
-        init();
         Collection<String> col1 =  map.values();
         Collection<String> col2 =  mymap.values();
 
@@ -153,7 +147,6 @@ public class MyHashMapTest {
 
     @Test
     public void entrySet() {
-        init();
         Set set1 = map.entrySet();
         Set set2 = mymap.entrySet();
 

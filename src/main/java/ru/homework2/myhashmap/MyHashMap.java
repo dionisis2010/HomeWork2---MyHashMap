@@ -8,22 +8,22 @@ import java.util.*;
  * собственная реализация HashMap на основе хэштаблиц.
  * Обработка коллизий происходит методом цепочек (в конфликтующих корзинах формируется односвязный список)
  *
- * @param <K>
- * @param <V>
+ * @param <K> key -уникальный объект, по которому происходит доступ к значению
+ * @param <V> value - значение привязанное к ключю
  */
 public class MyHashMap<K, V> implements Map<K, V> {
 
-    private static int DEFAULT_CAPACITY = 10;
-    private static double DEFAULT_LOADFACTOR = 0.75;
+    private final static int DEFAULT_CAPACITY = 10;
+    private final static double DEFAULT_LOAD_FACTOR = 0.75;
 
     private MyEntry<K, V>[] entries;
     private int size = 0;
     private int capacity;
-    private double loadFactor;
+    private final double loadFactor;
     private int threshold;
 
     /**
-     * служебное поле для сравнения по хэшкоду, чтобы не при нескольких итерация подряд с одним ключем
+     * служебное поле для сравнения по хэшкоду, чтобы не пресчитывать при нескольких итерация подряд с одним ключем
      */
     private int lastUsedKeyHashCode;
 
@@ -33,7 +33,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
     }
 
     public MyHashMap(int capacity) {
-        this(capacity, DEFAULT_LOADFACTOR);
+        this(capacity, DEFAULT_LOAD_FACTOR);
     }
 
     /**
@@ -42,13 +42,17 @@ public class MyHashMap<K, V> implements Map<K, V> {
      * @throws InvalidParameterException если loadFactor или capacity не валидные
      */
     public MyHashMap(int capacity, double loadFactor) {
-        if (loadFactor < 0 || loadFactor > 1 || capacity < 0) {
-            throw new InvalidParameterException();
-        }
+        validParameters(capacity, loadFactor);
         this.loadFactor = loadFactor;
         this.capacity = capacity;
         entries = new MyEntry[capacity];
         calculateThreshold();
+    }
+
+    private void validParameters(int capacity, double loadFactor) {
+        if ((loadFactor < 0 || loadFactor > 1) || capacity < 0) {
+            throw new InvalidParameterException("не валидные параметры");
+        }
     }
 
 
@@ -57,7 +61,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     private void validKey(K key) {
         if (key == null) {
-            throw new NullPointerException();
+            throw new UnsupportedOperationException("данная реализация Map не поддреживает работу с null ключем");
         }
     }
 
@@ -81,7 +85,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
      * служебный метод сравнения ключей по хэшкоду, для повышения производительности
      */
     private boolean compareKeys(MyEntry<K, V> entry, K key) {
-        if (entry.getHashCode() != lastUsedKeyHashCode) {
+        if (entry.getKeyHashCode() != lastUsedKeyHashCode) {
             return false;
         } else {
             return entry.getKey().equals(key);
@@ -94,7 +98,6 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
     /**
      * расширяет внутренний массив до указанного параметра (создает новый, перезаписывает все Entry по новым id)
-     *
      * @param newCapacity определяет размер внутреннего массива (по умолчанию больше в 2 раза исходного)
      */
     private void resize(int newCapacity) {
@@ -114,7 +117,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
      * @return массив всех Entry (поле Entry.nextCollision обнуляется)
      */
     private MyEntry<K, V>[] getAllEntries() {
-        MyEntry<K, V>[] allEntries = new MyEntry[size()];
+        final MyEntry<K, V>[] allEntries = new MyEntry[size()];
         int getedEntryID = 0;
         for (int mapEntryID = 0; mapEntryID < entries.length; mapEntryID++) {
             if (isEmptyID(mapEntryID)) {

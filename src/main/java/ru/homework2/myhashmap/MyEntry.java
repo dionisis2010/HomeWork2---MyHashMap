@@ -6,14 +6,14 @@ import java.util.Objects;
 public class MyEntry<K, V> implements Map.Entry<K, V> {
 
     private MyEntry nextCollision;
-    private K key;
+    private final K key;
+    private final int keyHashCode;
     private V value;
-    private int hashCode;
 
     MyEntry(K key, V value) {
         this.key = key;
         this.value = value;
-        this.hashCode = key.hashCode();
+        this.keyHashCode = key.hashCode();
     }
 
     boolean hasNext() {
@@ -21,7 +21,7 @@ public class MyEntry<K, V> implements Map.Entry<K, V> {
     }
 
     boolean equalsKey(MyEntry<K, V> entry) {
-        if (this.getHashCode() != entry.getHashCode()) {
+        if (this.getKeyHashCode() != entry.getKeyHashCode()) {
             return false;
         } else {
             return this.getKey().equals(entry.getKey());
@@ -33,7 +33,7 @@ public class MyEntry<K, V> implements Map.Entry<K, V> {
      */
     @Override
     public String toString() {
-        return this.hashCode + " " + this.key + " " + this.value;
+        return this.keyHashCode + " " + this.key + " " + this.value;
     }
 
     /**
@@ -56,8 +56,8 @@ public class MyEntry<K, V> implements Map.Entry<K, V> {
         return Objects.hash(key, value);
     }
 
-    int getHashCode() {
-        return hashCode;
+    int getKeyHashCode() {
+        return keyHashCode;
     }
 
     MyEntry getNextCollision() {
