@@ -99,7 +99,6 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     private void resize(int newCapacity) {
         MyEntry<K, V>[] oldEntries = this.getAllEntries();
-//        nulledCollision(oldEntries);
         this.capacity = newCapacity;
         entries = new MyEntry[newCapacity];
         this.size = 0;
@@ -116,16 +115,16 @@ public class MyHashMap<K, V> implements Map<K, V> {
      */
     private MyEntry<K, V>[] getAllEntries() {
         MyEntry<K, V>[] allEntries = new MyEntry[size()];
-        int id = 0;
-        for (int entriesID = 0; entriesID < entries.length; entriesID++) {
-            if (isEmptyID(entriesID)) {
+        int getedEntryID = 0;
+        for (int mapEntryID = 0; mapEntryID < entries.length; mapEntryID++) {
+            if (isEmptyID(mapEntryID)) {
                 continue;
             }
-            allEntries[id] = entries[entriesID];
-            id++;
-            while (allEntries[id - 1].hasNext()) {
-                allEntries[id] = allEntries[id - 1].getNextCollision();
-                id++;
+            allEntries[getedEntryID] = entries[mapEntryID];
+            getedEntryID++;
+            while (allEntries[getedEntryID - 1].hasNext()) {
+                allEntries[getedEntryID] = allEntries[getedEntryID - 1].getNextCollision();
+                getedEntryID++;
             }
         }
         return allEntries;
@@ -188,11 +187,17 @@ public class MyHashMap<K, V> implements Map<K, V> {
         return size == 0;
     }
 
+    /**
+     * @return возвращает true если полученный ключ есть в мапе, иначе false
+     */
     @Override
     public boolean containsKey(Object key) {
         return search((K) key) != null;
     }
 
+    /**
+     * @return возвращает true если полученное значение есть в мапе, иначе false
+     */
     @Override
     public boolean containsValue(Object value) {
         return values().contains(value);
@@ -286,20 +291,20 @@ public class MyHashMap<K, V> implements Map<K, V> {
         if (isEmptyID(id)) return null;
         MyEntry tmpPrevEntry;
         MyEntry entry = entries[id];
-        if (compareKeys(entry, (K) key)) {//если верхний в серьге
+        if (compareKeys(entry, (K) key)) {
             entries[id] = entry.hasNext() ? entry.getNextCollision() : null;
             size--;
             return (V) entry.getValue();
-        } else {//не первый в серьге
+        } else {
             while (true) {
-                if (entry.hasNext()) {//есть дальнейший
+                if (entry.hasNext()) {
                     tmpPrevEntry = entry;
                     entry = entry.getNextCollision();
                 } else return null;
                 if (compareKeys(entry, (K) key)) {
-                    if (!entry.hasNext()) {//следующий - пусто
+                    if (!entry.hasNext()) {
                         tmpPrevEntry.setNextCollision(null);
-                    } else {//следующий не пусто
+                    } else {
                         tmpPrevEntry.setNextCollision(entry.getNextCollision());
                     }
                     size--;
@@ -318,6 +323,9 @@ public class MyHashMap<K, V> implements Map<K, V> {
         size = 0;
     }
 
+    /**
+     * @return возвращает множество всех ключей из мапы
+     */
     @Override
     public Set<K> keySet() {
         Set<K> set = new HashSet<>();
@@ -328,6 +336,9 @@ public class MyHashMap<K, V> implements Map<K, V> {
         return set;
     }
 
+    /**
+     * @return возвращает множество всех значений из мапы
+     */
     @Override
     public Collection<V> values() {
         MyEntry<K, V>[] arrayEntries = getAllEntries();
@@ -338,13 +349,15 @@ public class MyHashMap<K, V> implements Map<K, V> {
         return listValues;
     }
 
+    /**
+     * @return возвращается множество копий всех пар ключ/значение
+     */
     @Override
     public Set<Entry<K, V>> entrySet() {
         Set<Entry<K, V>> set = new HashSet<>();
         for (MyEntry<K, V> entry : getAllEntries()) {
             set.add(new MyEntry<K, V>(entry.getKey(), entry.getValue()));
         }
-//        Collections.addAll(set, getAllEntries());
         return set;
     }
 

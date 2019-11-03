@@ -28,11 +28,17 @@ public class MyEntry<K, V> implements Map.Entry<K, V> {
         }
     }
 
+    /**
+     * @return возвращает строку содержащую через пробел хэшкод ключа, ключ и значение
+     */
     @Override
     public String toString() {
         return this.hashCode + " " + this.key + " " + this.value;
     }
 
+    /**
+     * @return true если объекты идентичны, иначе false
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,6 +48,9 @@ public class MyEntry<K, V> implements Map.Entry<K, V> {
                 Objects.equals(value, myEntry.value);
     }
 
+    /**
+     * @return хэшкод пары ключ/занчение
+     */
     @Override
     public int hashCode() {
         return Objects.hash(key, value);
@@ -59,16 +68,25 @@ public class MyEntry<K, V> implements Map.Entry<K, V> {
         this.nextCollision = nextCollision;
     }
 
+    /**
+     * @return возвращает ключ
+     */
     @Override
     public K getKey() {
         return key;
     }
 
+    /**
+     * @return возвращает значение
+     */
     @Override
     public V getValue() {
         return value;
     }
 
+    /**
+     * @return устанавливает новое значение
+     */
     @Override
     public V setValue(V value) {
         V oldValue = this.value;

@@ -1,9 +1,4 @@
 /HomeWork2 MyHashMap.iml
-/.idea/workspace.xml
-/.idea/misc.xml
-/.idea/compiler.xml
-/.idea/.gitignore
-/.idea/$PRODUCT_WORKSPACE_FILE$
+/.idea
 /.gitignore
-/plan.txt
 /target/

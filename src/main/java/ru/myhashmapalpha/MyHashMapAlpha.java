@@ -31,7 +31,6 @@ public class MyHashMapAlpha<K, V> implements MyMap<K, V> {
      */
     @Override
     public boolean put(K key, V value) {
-//        int id = searchKey(key);
         int id = searchKeyWithHash(key);
         if (id != -1) {
             elements[id].setValue(value);
@@ -80,7 +79,6 @@ public class MyHashMapAlpha<K, V> implements MyMap<K, V> {
      */
     @Override
     public boolean delete(K key) {
-//        int id = searchKey(key);
         int id = searchKeyWithHash(key);
         if (id > 0) {
             elements[id] = null;
