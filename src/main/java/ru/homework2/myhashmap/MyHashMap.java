@@ -341,7 +341,10 @@ public class MyHashMap<K, V> implements Map<K, V> {
     @Override
     public Set<Entry<K, V>> entrySet() {
         Set<Entry<K, V>> set = new HashSet<>();
-        Collections.addAll(set, getAllEntries());
+        for (MyEntry<K, V> entry : getAllEntries()) {
+            set.add(new MyEntry<K, V>(entry.getKey(), entry.getValue()));
+        }
+//        Collections.addAll(set, getAllEntries());
         return set;
     }
 
