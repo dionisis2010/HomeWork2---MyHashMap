@@ -3,9 +3,14 @@ package ru.homework2.myhashmap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * хранит пару ключ/значение, может образовывать односвязный список
+ * @param <K> ключ
+ * @param <V> значение
+ */
 public class MyEntry<K, V> implements Map.Entry<K, V> {
 
-    private MyEntry nextCollision;
+    private MyEntry<K,V> nextEntry;
     private final K key;
     private final int keyHashCode;
     private V value;
@@ -13,19 +18,19 @@ public class MyEntry<K, V> implements Map.Entry<K, V> {
     MyEntry(K key, V value) {
         this.key = key;
         this.value = value;
-        this.keyHashCode = key.hashCode();
+        this.keyHashCode = key == null ? 0 : key.hashCode();
     }
 
     boolean hasNext() {
-        return nextCollision != null;
+        return nextEntry != null;
     }
 
-    boolean equalsKey(MyEntry<K, V> entry) {
-        if (this.getKeyHashCode() != entry.getKeyHashCode()) {
-            return false;
-        } else {
-            return this.getKey().equals(entry.getKey());
-        }
+    MyEntry<K,V> getNext() {
+        return this.nextEntry;
+    }
+
+    void setNext(MyEntry<K,V> nextCollision) {
+        this.nextEntry = nextCollision;
     }
 
     /**
@@ -49,6 +54,22 @@ public class MyEntry<K, V> implements Map.Entry<K, V> {
     }
 
     /**
+     * @return возвращает ключ
+     */
+    @Override
+    public K getKey() {
+        return key;
+    }
+
+    boolean equalsKey(MyEntry<K, V> entry) {
+        if (this.getKeyHashCode() != entry.getKeyHashCode()) {
+            return false;
+        } else {
+            return this.getKey().equals(entry.getKey());
+        }
+    }
+
+    /**
      * @return хэшкод пары ключ/занчение
      */
     @Override
@@ -58,22 +79,6 @@ public class MyEntry<K, V> implements Map.Entry<K, V> {
 
     int getKeyHashCode() {
         return keyHashCode;
-    }
-
-    MyEntry getNextCollision() {
-        return nextCollision;
-    }
-
-    void setNextCollision(MyEntry nextCollision) {
-        this.nextCollision = nextCollision;
-    }
-
-    /**
-     * @return возвращает ключ
-     */
-    @Override
-    public K getKey() {
-        return key;
     }
 
     /**
@@ -93,5 +98,6 @@ public class MyEntry<K, V> implements Map.Entry<K, V> {
         this.value = value;
         return oldValue;
     }
+
 
 }
