@@ -1,4 +1,4 @@
-package ru.homework2.myhashmap;
+package ru.homework2and3.myhashmap;
 
 import java.util.Map;
 import java.util.Objects;

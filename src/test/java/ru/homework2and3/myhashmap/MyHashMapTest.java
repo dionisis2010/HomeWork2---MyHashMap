@@ -1,4 +1,4 @@
-package ru.homework2.myhashmap;
+package ru.homework2and3.myhashmap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,10 +24,10 @@ public class MyHashMapTest {
             map.put(KEY + i, VALUE + i);
             mymap.put(KEY + i, VALUE + i);
         }
-        map.put(null,"nullValue1");
-        mymap.put(null,"nullValue1");
-        map.put(null,"nullValue2");
-        mymap.put(null,"nullValue2");
+        map.put(null, "nullValue1");
+        mymap.put(null, "nullValue1");
+        map.put(null, "nullValue2");
+        mymap.put(null, "nullValue2");
     }
 
     @Test
@@ -137,12 +137,13 @@ public class MyHashMapTest {
 
     @Test
     public void values() {
-        Collection<String> col1 =  map.values();
-        Collection<String> col2 =  mymap.values();
+        Collection<String> col1 = map.values();
+        Collection<String> col2 = mymap.values();
 
         for (int i = 0; i < col1.size(); i++) {
-            assertEquals(col2.contains(VALUE +i), col1.contains(VALUE +i));
+            assertEquals(col2.contains(VALUE + i), col1.contains(VALUE + i));
         }
+//        assertEquals(col2, col1);
         assertEquals(col2.size(), col1.size());
     }
 

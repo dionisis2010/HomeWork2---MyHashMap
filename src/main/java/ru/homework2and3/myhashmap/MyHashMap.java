@@ -1,4 +1,4 @@
-package ru.homework2.myhashmap;
+package ru.homework2and3.myhashmap;
 
 
 import java.security.InvalidParameterException;
@@ -111,7 +111,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
         for (MyEntry<K, V> oldEntry : oldEntries) {
             oldEntry.setNext(null);
-            put(oldEntry);
+            putEntry(oldEntry);
         }
     }
 
@@ -141,26 +141,16 @@ public class MyHashMap<K, V> implements Map<K, V> {
     /**
      * служебный метод для работы динамического расширения в целях производительности, чтобы избежать создания лишних объектов
      */
-    private void put(MyEntry<K, V> newEntry) {
-        int id = generateID(newEntry.getKey());
+    private void putEntry(MyEntry<K, V> newEntry) {
+        int bundleID = generateID(newEntry.getKey());
 
-        if (isEmptyBundle(id)) {
-            bundles[id] = newEntry;
-            incrementSize();
-            return;
+        if (isEmptyBundle(bundleID)) {
+            bundles[bundleID] = newEntry;
+        } else {
+            MyEntry hedderEntry = getHeaderEntryInBundle(bundleID);
+            bundles[bundleID] = newEntry;
+            newEntry.setNext(hedderEntry);
         }
-        MyEntry entry = bundles[id];
-        while (true) {
-            if (entry.equalsKey(newEntry)) {
-                entry.setValue(newEntry.getValue());
-                size++;
-                return;
-            }
-            if (entry.hasNext()) {
-                entry = entry.getNext();
-            } else break;
-        }
-        entry.setNext(newEntry);
         incrementSize();
     }
 
@@ -387,13 +377,13 @@ public class MyHashMap<K, V> implements Map<K, V> {
     public String toString() {
         StringBuilder res = new StringBuilder();
         MyEntry<K,V> entry;
-        for (int i = 0; i < this.bundles.length; i++) {
-            if (this.bundles[i] != null) {
-                entry = this.bundles[i];
-                while (true) {
-                    res.append(i).append(" ").append(entry).append("\n");
-                    if (entry.hasNext()) entry = entry.getNext();
-                    else break;
+        for (int bundleID = 0; bundleID < this.bundles.length; bundleID++) {
+            if (isEmptyBundle(bundleID)) {
+                entry = getHeaderEntryInBundle(bundleID);
+                res.append(bundleID).append(" ").append(entry).append("\n");
+                while (entry.hasNext()){
+                    entry = entry.getNext();
+                    res.append(bundleID).append(" ").append(entry).append("\n");
                 }
             }
         }
